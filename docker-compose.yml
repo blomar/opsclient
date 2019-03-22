@@ -1,0 +1,14 @@
+version: "3"
+services:
+  client:
+    build: .
+    ports:
+      - "8000:5000"
+    environment:
+      - FLASK_ENV=development
+  crud:
+    image: opscrudapi:latest
+    ports:
+      - "8001:5000"
+    environment:
+      - FLASK_ENV=development
