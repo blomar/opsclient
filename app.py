@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def main_index():
-    return "Fetch Ops users: 127.0.0.1:5000/user/"
+    return "Ops client: 127.0.0.1:5000/user/"
 
 @app.route('/user/<user>')
 def get_user(user):

@@ -2,12 +2,13 @@ version: "3"
 services:
   client:
     build: .
+    image: opsclient:latest
     ports:
       - "8000:5000"
     environment:
       - FLASK_ENV=development
   crud:
-    image: opscrudapi:latest
+    image: opscrud:latest
     ports:
       - "8001:5000"
     environment:
