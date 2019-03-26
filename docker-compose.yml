@@ -4,7 +4,7 @@ services:
     build: .
     image: opsclient:latest
     ports:
-      - "8000:5000"
+      - "8000:80"
     environment:
       - FLASK_ENV=development
   crud:
