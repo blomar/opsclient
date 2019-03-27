@@ -13,5 +13,5 @@ def ping():
 
 @app.route('/user/<user>')
 def get_user(user):
-    r = requests.get('http://crud:5000/user/' + user)
+    r = requests.get('http://crud.staging.fargate.local:5000/user/' + user)
     return "Fetched through the ops_client: " + r.text
