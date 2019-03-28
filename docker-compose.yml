@@ -9,6 +9,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
     environment:
       - FLASK_ENV=development
+      - APP_ENV=
   crud:
     image: opscrud:latest
     ports:

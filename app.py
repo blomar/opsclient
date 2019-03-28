@@ -1,6 +1,7 @@
 from flask import Flask, redirect
 from healthcheck import HealthCheck, EnvironmentDump
 import requests
+import os
 
 app = Flask(__name__)
 
@@ -8,13 +9,15 @@ app = Flask(__name__)
 health = HealthCheck(app, "/healthcheck")
 envdump = EnvironmentDump(app, "/environment")
 
+appenv = os.getenv('APP_ENV', '.staging.fargate.local')
+
 @app.route('/')
 def main_index():
-    return "Ops client: 127.0.0.1:5000/user/"
+    return 'Ops client: APP_ENV: ' + appenv
 
 @app.route('/user/<user>')
 def get_user(user):
-    r = requests.get('http://crud.staging.fargate.local:5000/user/' + user)
+    r = requests.get('http://crud' + appenv + ':5000/user/' + user)
     return "Fetched through the ops_client: " + r.text
 
 @app.route('/ping')
