@@ -5,11 +5,15 @@ services:
     image: opsclient:latest
     ports:
       - "8000:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/healthcheck"]
     environment:
       - FLASK_ENV=development
   crud:
     image: opscrud:latest
     ports:
       - "8001:5000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthcheck"]
     environment:
       - FLASK_ENV=development
