@@ -6,19 +6,19 @@ services:
     ports:
       - "8000:5000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/client/healthcheck"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/client/admin/healthcheck"]
     environment:
       - FLASK_ENV=development
-      - APP_ENV=
       - SERVICE_NAME=client
-      - ALB=localhost:8001      -
+      - SERVICE_VERSION=1.2.3
+      - ALB=localhost:8001
   crud:
     image: ops/crud:latest
     ports:
       - "8001:5000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/crud/healthcheck"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/crud/admin/healthcheck"]
     environment:
       - FLASK_ENV=development
-      - APP_ENV=
       - SERVICE_NAME=crud
+      - SERVICE_VERSION=1.2.3
