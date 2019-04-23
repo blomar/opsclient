@@ -11,7 +11,7 @@ services:
       - FLASK_ENV=development
       - SERVICE_NAME=client
       - SERVICE_VERSION=1.2.3
-      - ALB=localhost:8001
+      - ALB=crud:5000
   crud:
     image: ops/crud:latest
     ports:
