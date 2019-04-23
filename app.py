@@ -4,7 +4,9 @@ import requests
 import os
 
 alb = os.getenv('ALB', 'localhost')
-service_name = os.getenv('SERVICE_NAME', '')
+service_name = os.getenv('SERVICE_NAME', '-')
+service_version = os.getenv('SERVICE_VERSION', '-')
+service_environment = os.getenv('SERVICE_ENVIRONMENT', '-')
 
 prefix = ''
 if service_name:
@@ -13,16 +15,14 @@ if service_name:
 app = Flask(__name__)
 
 # wrap the flask app and give a heathcheck url
-health = HealthCheck(app, prefix + "/healthcheck")
-envdump = EnvironmentDump(app, prefix + "/environment")
-
-appenv = os.getenv('APP_ENV', '.staging.fargate.local')
+health = HealthCheck(app, prefix + "/admin/healthcheck")
+envdump = EnvironmentDump(app, prefix + "/admin/environment")
 
 @app.route(prefix + '/')
 def main_index():
-    return 'Ops client: APP_ENV: ' + appenv
+    return 'NAME: %s\nVERSION: %s\nENVIRONMENT: %s\n' % (service_name, service_version, service_environment)
 
 @app.route(prefix + '/user/<user>')
 def get_user(user):
     r = requests.get('http://' + alb + '/crud/user/' + user)
-    return "Fetched through the ops_client: " + r.text
+    return "Fetched through the ops/client: " + r.text
