@@ -1,5 +1,9 @@
 from flask import Flask, redirect
 from healthcheck import HealthCheck, EnvironmentDump
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+from aws_xray_sdk.core import patch_all
+
 import requests
 import os
 
@@ -12,16 +16,11 @@ prefix = ''
 if service_name:
     prefix = '/' + service_name
 
-
-from aws_xray_sdk.core import xray_recorder
-from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
-
 app = Flask(__name__)
 
-plugins = ('ECSPlugin')
-xray_recorder.configure(service=service_name, plugins=plugins)
+xray_recorder.configure(service=service_name)
 XRayMiddleware(app, xray_recorder)
-
+patch_all()
 
 # wrap the flask app and give a heathcheck url
 health = HealthCheck(app, prefix + "/admin/healthcheck")
