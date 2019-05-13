@@ -12,7 +12,16 @@ prefix = ''
 if service_name:
     prefix = '/' + service_name
 
+
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
+
 app = Flask(__name__)
+
+plugins = ('ECSPlugin')
+xray_recorder.configure(service=service_name, plugins=plugins)
+XRayMiddleware(app, xray_recorder)
+
 
 # wrap the flask app and give a heathcheck url
 health = HealthCheck(app, prefix + "/admin/healthcheck")

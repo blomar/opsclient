@@ -2,3 +2,4 @@ flask
 requests
 healthcheck
 six
+aws-xray-sdk
