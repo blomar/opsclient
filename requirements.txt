@@ -3,3 +3,4 @@ requests
 healthcheck
 six
 aws-xray-sdk
+json-logging
