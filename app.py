@@ -1,8 +1,9 @@
-from flask import Flask, redirect
+from flask import Flask, request, Response
 from healthcheck import HealthCheck, EnvironmentDump
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.ext.flask.middleware import XRayMiddleware
 from aws_xray_sdk.core import patch_all
+from prometheus_flask_exporter import PrometheusMetrics
 
 import logging
 import json_logging
@@ -36,23 +37,34 @@ xray_recorder.configure(service=service_name)
 XRayMiddleware(app, xray_recorder)
 patch_all()
 
+# Metrics
+metrics = PrometheusMetrics(app, export_defaults=False, path=prefix + '/admin/metrics', defaults_prefix=service_name,
+                            group_by='path', buckets=None, registry=None)
+
+metrics.info('app_info', 'Application info', version=service_version, service_name=service_name,
+             service_environment=service_environment)
+
 # wrap the flask app and give a heathcheck url
 health = HealthCheck(app, prefix + '/admin/healthcheck')
 envdump = EnvironmentDump(app, prefix + '/admin/environment')
 
+
 @app.route(prefix + '/')
 def main_index():
-    LOGGER.info('main_index', extra = {'props' : {'name' : service_name, 'version' : service_version, 'environment' : service_environment}})
+    LOGGER.info('main_index', extra = {'props' : {'name': service_name, 'version': service_version,
+                                                  'environment': service_environment}})
     return 'NAME: %s\nVERSION: %s\nENVIRONMENT: %s\n' % (service_name, service_version, service_environment)
+
 
 @app.route(prefix + '/user/<user>')
 def get_user(user):
-    LOGGER.info('Try to fetch user: %s', user, extra = {'props' : {'user' : user}})
-    response = requests.get('http://' + alb + '/crud/user/' + user)
+    LOGGER.info('Try to fetch user: %s', user, extra = {'props': {'user' : user}})
+    response = requests.get('http://' + alb + '/' + prefix + '/crud/user/' + user)
     return 'Fetched through the ops/client: ' + response.text
+
 
 @app.route(prefix + '/random')
 def get_random():
-    response = requests.get('http://' + alb + '/crud/stats')
-    LOGGER.info('Radom, code %s', response.status_code)
+    response = requests.get('http://' + alb + '/' + prefix + '/crud/stats')
+    LOGGER.info('Random, code %s', response.status_code)
     return response.text, response.status_code
