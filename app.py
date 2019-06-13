@@ -59,12 +59,12 @@ def main_index():
 @app.route(prefix + '/user/<user>')
 def get_user(user):
     LOGGER.info('Try to fetch user: %s', user, extra = {'props': {'user' : user}})
-    response = requests.get('http://' + alb + '/' + prefix + '/crud/user/' + user)
+    response = requests.get('http://' + alb + '/crud/user/' + user)
     return 'Fetched through the ops/client: ' + response.text
 
 
 @app.route(prefix + '/random')
 def get_random():
-    response = requests.get('http://' + alb + '/' + prefix + '/crud/stats')
+    response = requests.get('http://' + alb + '/crud/stats')
     LOGGER.info('Random, code %s', response.status_code)
     return response.text, response.status_code
